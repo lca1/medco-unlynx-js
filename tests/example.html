@@ -1,0 +1,73 @@
+<meta charset="UTF-8">
+<head>
+	<title>JS encryption tests</title>
+	<script type="text/javascript" src="scripts/cryptolib.js"></script>
+	<script>
+        var counter = 0;
+        setInterval(()=> {
+            counter += 1;
+            document.querySelector("#mydiv").innerHTML = counter;
+            }, 100);
+
+
+		var pk=null,sk;
+		var cipher, plain;
+		var K, S;
+
+		function genkey(){
+			[sk, pk] = GenKey()
+//			alert("Secret key: " + sk + "\nPrivate key: " + pk)
+		}
+
+		function encrypt(){
+			cipher = EncryptStr(pk, "9999")
+//			alert("Cipher: " + cipher)
+		}
+		function decrypt() {
+			plain = DecryptStr(cipher, sk);
+			alert("Plaintext: " + plain)
+		}
+
+        function light_encrypt_init(){
+		    if (pk==null){
+		        alert("generate the keys before")
+            }
+            [K, S] = LightEncryptStr_init(pk)
+        }
+        function light_encrypt(){
+            cipher = LightEncryptStr(9999, K, S)
+        }
+
+        function enc10(){
+            genkey();
+            light_encrypt_init();
+
+            var start = Date.now()
+            var plains = [13, 66, 23444, -124523632, 151, 5552, 352, -12426324634];
+            for(var i=0; i < plains.length; i++){
+                LightEncryptStr(i, K, S)
+            }
+            alert((Date.now()-start)/1000 + " seconds to encrypt " + plains.length + " integers")
+        }
+
+	</script>
+</head>
+<body>
+    <div>Problem: the page is frozen while encrypting and decrypting => use web workers</div>
+    <div id="mydiv"></div>
+	<input type="button" onclick="genkey()" value="gen key">
+	<input type="button" onclick="encrypt()" value="encryp">
+	<input type="button" onclick="decrypt()" value="decrypt">
+
+    <input type="button" onclick="genkey();encrypt();decrypt()" value="all">
+    <!--<input type="button" onclick="MyPrint()" value="print">-->
+    <br>
+    <input type="button" onclick="light_encrypt_init()" value="light enc init">
+    <input type="button" onclick="light_encrypt()" value="light enc">
+
+    <br>
+    <input type="button" onclick="enc10()" value="light enc 10 numbers">
+
+
+</body>
+</html>

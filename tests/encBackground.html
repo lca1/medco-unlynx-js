@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="scripts/cryptolib.js"></script>
+    <script type="text/javascript" src="scripts/workersController.js"></script>
+    
+    <title>Encypt/Decrypt in background</title>
+
+    <script>
+        // a counter to show when the page freezes
+        var counter = 0;
+        setInterval(function() {
+            counter += 1;
+            document.querySelector("#counter").innerHTML = counter;
+        }, 100);
+
+
+
+//        i2b2.MedCo.model.panels[0].sensitive = {}
+        var to_be_encrypted =
+            ["123", "5678","-36586578456","13","66","23444","-124523632","151","5552","352","-12426324634","235423","62235","-633455"];
+
+        // initialize 5 workers
+        i2b2.MedCo.ctrlr.background.initWorkers(5);
+
+        // initialize the parameters of the encryption
+        i2b2.MedCo.ctrlr.background.initEncrypt();
+
+    </script>
+</head>
+<body>
+	<div>Now the page does not freeze</div>
+	<div id="counter"></div>
+	
+	<br>
+
+	<input type="button" onclick="i2b2.MedCo.ctrlr.background.toBeEncrypted(to_be_encrypted)" value="start encryption">
+
+    <br>
+
+	<div id="encrypted"></div>
+
+</body>
+</html>

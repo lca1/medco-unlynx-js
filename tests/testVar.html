@@ -1,0 +1,25 @@
+<meta charset="UTF-8">
+<head>
+	<title>JS encryption tests</title>
+	<script type="text/javascript" src="scripts/cryptolib.js"></script>
+	<script>
+		var pk="Sdmuk6sblX10oI47OACV/7YJ5EV9xjC4yv3PxaKc+w4=";
+        var sk="zjvEJSm8BHpVqqS7PPy4xSE6n7QIorre1yuhuZ8bzg4=";
+
+        var K ="4zKXNX74MKVSWMZGScdiOBea+kra3W7CdZvVkhX+yyA=";
+        var S = "25HhZV/HKHaGn+nfJS0hl5VGys3uCjMZtex6THA5/0c=";
+
+		var plains_str = ["-7054948997223410688","-7054948998062267136","-7054968999892742144","-7054948999337337856","-7054948997064022784","-7054953138544961536","-7054948997064020736","-7054923607457132544","-7054904773018905600","-7054898625779855360","-7054948987408734208","-7054923379857424384","-7054917142457610240","-7054861692282335232","-7054948050082458624","-7054922546600210432","-7054949048695910400","-7054923381098933248","-7054861517262417920","-7054918645662608384","-7054905185268658176","-7054904954414166016","-7054898626853597184","-7054904932905773056","-7054861823278837760"];
+        var ciphers = new Array(plains_str.length);
+
+		for (var i = 0; i<plains_str.length; i++){
+//            ciphers[i] = LightEncryptInt(parseInt(plains_str[i]), K, S)
+            ciphers[i] = LightEncryptStr(plains_str[i], K, S)
+        }
+        console.log(JSON.stringify(ciphers))
+	</script>
+</head>
+<body>
+
+</body>
+</html>
