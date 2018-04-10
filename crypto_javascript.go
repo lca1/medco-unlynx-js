@@ -1,30 +1,31 @@
 package main
 
 import (
-	//"gopkg.in/dedis/onet.v1/app"
+	"gopkg.in/dedis/onet.v1/app"
 	"github.com/gopherjs/gopherjs/js"
 	"./mylib"
 	//"./mappingTable"
+	"os"
 )
 
 // build me with: gopherjs build -m crypto_javascript.go -o cryptolib.js
 func main() {
 	 //--> transiple the three functions
-	transpileFunctions()
+	//transpileFunctions()
 
 
 	//// --> compute the aggregate key of the cothority
-	//f, err := os.Open("./tools/gopherjsCrypto/cothority")
-	//if err != nil {
-	//	print("Error while opening group file", err)
-	//	return
-	//}
-	//el, err := app.ReadGroupToml(f)
-	//if err != nil {
-	//	print("Error while reading group file", err)
-	//	return
-	//}
-	//print(mylib.PointToString(el.Aggregate))
+	f, err := os.Open("../cothority")
+	if err != nil {
+		print("Error while opening group file: ", err.Error())
+		return
+	}
+	el, err := app.ReadGroupToml(f)
+	if err != nil {
+		print("Error while reading group file: ", err.Error())
+		return
+	}
+	print(mylib.PointToString(el.Aggregate))
 
 
 
