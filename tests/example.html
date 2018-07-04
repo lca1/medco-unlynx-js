@@ -50,11 +50,29 @@
             alert((Date.now()-start)/1000 + " seconds to encrypt " + plains.length + " integers")
         }
 
+        // aggregate public keys into cothority key
+        function aggkeys(){
+            alert(AggKeys("[[servers]]\n Address = \"tls://10.90.38.8:2000\"\n Suite = \"Ed25519\"\n Public = \"d4ca39db7834fdad06ef8de54e34b4a0942816efe801ed8c1607d197e0d0bb4f\"\n Description = \"Unlynx Server 0\"\n[[servers]]\n Address = \"tls://10.90.38.10:2000\"\n Suite = \"Ed25519\"\n Public = \"cfa45916a96c14b4b9a8417c6ffff4108d73bc048190d0c1c350f955a8e516d7\"\n Description = \"Unlynx Server 1\"\n [[servers]]\n Address = \"tls://10.90.38.11:2000\"\n Suite = \"Ed25519\"\n Public = \"2580a4dc353b979410896d6d71f80b9254ee6999be8361bd2f0c956cf88ea113\"\n Description = \"Unlynx Server 2\""))
+        }
+
+        function aggkeysfile(){
+            fetch("group.toml").then(function(response) {
+                response.text().then(function(text) {
+                    alert(AggKeys(text));
+                });
+            });
+        }
 	</script>
 </head>
 <body>
     <div>Problem: the page is frozen while encrypting and decrypting => use web workers</div>
     <div id="mydiv"></div>
+
+    <input type="button" onclick="aggkeys()" value="aggregate">
+    <input type="button" onclick="aggkeysfile()" value="aggregate from file">
+
+    <br>
+
 	<input type="button" onclick="genkey()" value="gen key">
 	<input type="button" onclick="encrypt()" value="encryp">
 	<input type="button" onclick="decrypt()" value="decrypt">
@@ -62,11 +80,13 @@
     <input type="button" onclick="genkey();encrypt();decrypt()" value="all">
     <!--<input type="button" onclick="MyPrint()" value="print">-->
     <br>
+
     <input type="button" onclick="light_encrypt_init()" value="light enc init">
     <input type="button" onclick="light_encrypt()" value="light enc">
 
     <br>
-    <input type="button" onclick="enc10()" value="light enc 10 numbers">
+
+    <input type="button" onclick="enc10()" value="light enc 8 numbers">
 
 
 </body>

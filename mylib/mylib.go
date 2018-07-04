@@ -3,15 +3,23 @@ package mylib
 import (
 	"gopkg.in/dedis/crypto.v0/abstract"
 	"github.com/lca1/unlynx/lib"
-	"gopkg.in/dedis/onet.v1/network"
+	networkv1 "gopkg.in/dedis/onet.v1/network"
 	"encoding/json"
 	"io/ioutil"
 	"../mappingTable"
 	"gopkg.in/dedis/crypto.v0/random"
 	"strconv"
+
+	"encoding/base64"
+	"github.com/BurntSushi/toml"
+	//"github.com/dedis/onet"
+	"github.com/dedis/kyber/suites"
+	"strings"
+	"github.com/dedis/kyber/util/encoding"
+	"github.com/dedis/kyber"
 )
 
-var suite = network.Suite
+var suite = networkv1.Suite
 
 type Keys struct{
 	SecKey string // scalar to []byte (as a string it does not work when writing and reading back from file)
@@ -21,6 +29,79 @@ type Keys struct{
 type CipherString struct{
 	K, C string // Point to string
 }
+
+// AGGREGATE PUBLIC KEYS FROM group.toml
+func AggregateKeysFromFile(rosterFilePath string) string{
+	b, err := ioutil.ReadFile(rosterFilePath)
+	if err != nil {
+		println("Error while opening group file", err)
+		return ""
+	}
+
+	return AggregateKeys(string(b))
+}
+
+// copy here the needed classes to avoid importing onet (gopherjs gives errors when importing onet...)
+
+// GroupToml holds the data of the group.toml file.
+type GroupToml struct {
+	Servers []*ServerToml `toml:"servers"`
+}
+// ServerToml is one entry in the group.toml file describing one server to use for
+// the cothority.
+type ServerToml struct {
+	Address     string
+	Suite       string
+	Public      string
+	Description string
+}
+func AggregateKeys(rosterToml string) string{
+	// convert input string to structure GroupToml
+	group := &GroupToml{}
+	_, err := toml.Decode(rosterToml, group)
+	if err != nil {
+		println(err)
+		return ""
+	}
+
+	if len(group.Servers) <= 0 {
+		println("Empty or invalid group file", err)
+		return ""
+	}
+
+	// convert all strings representing the public key to kyber.Point and sum them up
+	var agg kyber.Point
+	for i, s := range group.Servers {
+		// Backwards compatibility with old group files.
+		if s.Suite == "" {
+			s.Suite = "Ed25519"
+		}
+
+		suite, err := suites.Find(s.Suite)
+		if err != nil {
+			println(err)
+			return ""
+		}
+
+		pubR := strings.NewReader(s.Public)
+		public, err := encoding.ReadHexPoint(suite, pubR)
+		if err != nil {
+			println(err)
+			return ""
+		}
+
+		if i==0 {
+			agg = public
+		} else {
+			if public != nil {
+				agg = agg.Add(agg, public)
+			}
+		}
+	}
+	b, err := agg.MarshalBinary()
+	return base64.StdEncoding.EncodeToString(b)
+}
+
 
 // READ WRITE KEYS
 func WriteKeysToFile(secKey abstract.Scalar, pubKey abstract.Point, filename string) error{
@@ -72,7 +153,7 @@ func PointToString(p abstract.Point) string {
 
 func StringToPoint(str string) abstract.Point{
 	if str == "" {
-		nullPoint := network.Suite.Point().Null()
+		nullPoint := networkv1.Suite.Point().Null()
 		//js.Global.Call("alert", "nil point")
 		return nullPoint
 	}

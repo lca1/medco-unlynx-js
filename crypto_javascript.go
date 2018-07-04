@@ -1,33 +1,27 @@
 package main
 
 import (
-	"gopkg.in/dedis/onet.v1/app"
 	"github.com/gopherjs/gopherjs/js"
 	"./mylib"
 	//"./mappingTable"
-	"os"
+
+	//"io/ioutil"
+	//"os"
 )
 
-// build me with: gopherjs build -m crypto_javascript.go -o cryptolib.js
 func main() {
-	 //--> transiple the three functions
-	//transpileFunctions()
+	 //--> transpile the functions: gopherjs build -m crypto_javascript.go -o cryptolib.js
+	transpileFunctions()
 
 
-	//// --> compute the aggregate key of the cothority
-	f, err := os.Open("../cothority")
-	if err != nil {
-		print("Error while opening group file: ", err.Error())
-		return
-	}
-	el, err := app.ReadGroupToml(f)
-	if err != nil {
-		print("Error while reading group file: ", err.Error())
-		return
-	}
-	print(mylib.PointToString(el.Aggregate))
-
-
+	// --> compute the aggregate key of the cothority
+	//// given file path
+	//rosterFilePath := "src/main/tools/gopherjsCrypto/group.toml"
+	//println(mylib.AggregateKeysFromFile(rosterFilePath))
+	//
+	////// given file content
+	//rosterFileContent := "[[servers]]\n Address = \"tls://10.90.38.8:2000\"\n Suite = \"Ed25519\"\n Public = \"d4ca39db7834fdad06ef8de54e34b4a0942816efe801ed8c1607d197e0d0bb4f\"\n Description = \"Unlynx Server 0\"\n[[servers]]\n Address = \"tls://10.90.38.10:2000\"\n Suite = \"Ed25519\"\n Public = \"cfa45916a96c14b4b9a8417c6ffff4108d73bc048190d0c1c350f955a8e516d7\"\n Description = \"Unlynx Server 1\"\n [[servers]]\n Address = \"tls://10.90.38.11:2000\"\n Suite = \"Ed25519\"\n Public = \"2580a4dc353b979410896d6d71f80b9254ee6999be8361bd2f0c956cf88ea113\"\n Description = \"Unlynx Server 2\""
+	//println(mylib.AggregateKeys(rosterFileContent))
 
 	//--> check how big is the mapping table
 	//js.Global.Set("MyPrint", myprint)
@@ -39,6 +33,9 @@ func main() {
 }
 
 func transpileFunctions(){
+	js.Global.Set("AggKeys", mylib.AggregateKeys)
+	js.Global.Set("AggKeysFromFile", mylib.AggregateKeysFromFile)
+
 	js.Global.Set("GenKey", mylib.GenKey)
 	js.Global.Set("EncryptStr", mylib.EncryptStr)
 	js.Global.Set("DecryptStr", mylib.DecryptStr)
@@ -46,7 +43,8 @@ func transpileFunctions(){
 	js.Global.Set("LightEncryptStr_init", mylib.LightEncryptStr_init)
 	js.Global.Set("LightEncryptStr", mylib.LightEncryptStr)
 }
-//
+
+
 //func encryptAndTest(){
 //	//pk :="Sdmuk6sblX10oI47OACV/7YJ5EV9xjC4yv3PxaKc+w4=";
 //	//sk :="zjvEJSm8BHpVqqS7PPy4xSE6n7QIorre1yuhuZ8bzg4=";
