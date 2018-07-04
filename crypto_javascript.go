@@ -9,6 +9,10 @@ import (
 	//"os"
 )
 
+// USE:
+// unlynx: branch master newI2B2
+// onet: branch master
+
 func main() {
 	 //--> transpile the functions: gopherjs build -m crypto_javascript.go -o cryptolib.js
 	transpileFunctions()
