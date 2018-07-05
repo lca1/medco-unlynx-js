@@ -10,7 +10,7 @@ import (
 )
 
 // USE:
-// unlynx: branch master newI2B2
+// unlynx: branch newI2B2
 // onet: branch master
 
 func main() {
