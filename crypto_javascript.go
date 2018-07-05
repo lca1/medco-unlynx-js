@@ -23,7 +23,7 @@ func main() {
 	//rosterFilePath := "src/main/tools/gopherjsCrypto/group.toml"
 	//println(mylib.AggregateKeysFromFile(rosterFilePath))
 	//
-	////// given file content
+	//// given file content
 	//rosterFileContent := "[[servers]]\n Address = \"tls://10.90.38.8:2000\"\n Suite = \"Ed25519\"\n Public = \"d4ca39db7834fdad06ef8de54e34b4a0942816efe801ed8c1607d197e0d0bb4f\"\n Description = \"Unlynx Server 0\"\n[[servers]]\n Address = \"tls://10.90.38.10:2000\"\n Suite = \"Ed25519\"\n Public = \"cfa45916a96c14b4b9a8417c6ffff4108d73bc048190d0c1c350f955a8e516d7\"\n Description = \"Unlynx Server 1\"\n [[servers]]\n Address = \"tls://10.90.38.11:2000\"\n Suite = \"Ed25519\"\n Public = \"2580a4dc353b979410896d6d71f80b9254ee6999be8361bd2f0c956cf88ea113\"\n Description = \"Unlynx Server 2\""
 	//println(mylib.AggregateKeys(rosterFileContent))
 
