@@ -37,7 +37,7 @@ func main() {
 }
 
 func transpileFunctions(){
-	js.Global.Set("AggKeys", mylib.AggregateKeys)
+	js.Global.Set("`", mylib.AggregateKeys)
 	js.Global.Set("AggKeysFromFile", mylib.AggregateKeysFromFile)
 
 	js.Global.Set("GenKey", mylib.GenKey)
