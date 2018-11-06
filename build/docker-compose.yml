@@ -1,0 +1,8 @@
+version: '3'
+services:
+  build-medco-unlynx-js:
+    build:
+      context: ..
+      dockerfile: build/Dockerfile
+    volumes:
+      - ..:/medco-unlynx-js-src

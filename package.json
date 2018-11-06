@@ -1,0 +1,30 @@
+{
+  "name": "@medco/medco-unlynx-js",
+  "version": "0.1.5",
+  "description": "MedCo-Unlynx cryptosystem in javascript",
+  "main": "medco-unlynx-js.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "files": [
+    "medco-unlynx-js.js",
+    "medco-unlynx-js.js.map"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "github.com/lca1/medco-unlynx-js"
+  },
+  "homepage": "https://lca1.github.io/medco-documentation",
+  "keywords": [
+    "go",
+    "gopherjs",
+    "crypto",
+    "unlynx",
+    "medco"
+  ],
+  "author": "Mickaël Misbach <mickael@misba.ch>",
+  "contributors": [
+    "Niccolo Sacchi <niccolo.sacchi@libero.it>"
+  ],
+  "license": "SEE LICENSE IN LICENSE"
+}
