@@ -6,5 +6,6 @@ set -Eeuo pipefail
 SCRIPT_FOLDER="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 pushd "$SCRIPT_FOLDER/build"
+docker-compose build
 docker-compose up
 popd
