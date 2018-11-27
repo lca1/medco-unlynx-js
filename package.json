@@ -1,6 +1,6 @@
 {
   "name": "@medco/medco-unlynx-js",
-  "version": "0.1.5",
+  "version": "0.1.8",
   "description": "MedCo-Unlynx cryptosystem in javascript",
   "main": "medco-unlynx-js.js",
   "scripts": {
