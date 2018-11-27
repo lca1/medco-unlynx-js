@@ -1,7 +1,7 @@
 <meta charset="UTF-8">
 <head>
 	<title>JS encryption tests</title>
-	<script type="text/javascript" src="scripts/cryptolib.js"></script>
+	<script type="text/javascript" src="../medco-unlynx-js.js"></script>
 	<script>
         var counter = 0;
         setInterval(()=> {
@@ -12,54 +12,31 @@
 
 		var pk=null,sk;
 		var cipher, plain;
-		var K, S;
 
 		function genkey(){
-			[sk, pk] = GenKey()
-//			alert("Secret key: " + sk + "\nPrivate key: " + pk)
+			[sk, pk] = GenerateKeyPair()
+			alert("Private key: " + sk + "\nPublic key: " + pk)
 		}
 
 		function encrypt(){
-			cipher = EncryptStr(pk, "9999")
+			cipher = EncryptInt(pk, "9999")
 //			alert("Cipher: " + cipher)
 		}
 		function decrypt() {
-			plain = DecryptStr(cipher, sk);
+			plain = DecryptInt(cipher, sk);
 			alert("Plaintext: " + plain)
 		}
 
-        function light_encrypt_init(){
-		    if (pk==null){
-		        alert("generate the keys before")
-            }
-            [K, S] = LightEncryptStr_init(pk)
-        }
-        function light_encrypt(){
-            cipher = LightEncryptStr(9999, K, S)
-        }
-
-        function enc10(){
-            genkey();
-            light_encrypt_init();
-
-            var start = Date.now()
-            var plains = [13, 66, 23444, -124523632, 151, 5552, 352, -12426324634];
-            for(var i=0; i < plains.length; i++){
-                LightEncryptStr(i, K, S)
-            }
-            alert((Date.now()-start)/1000 + " seconds to encrypt " + plains.length + " integers")
-        }
-
         // aggregate public keys into cothority key
         function aggkeys(){
-            alert(AggKeys("[[servers]]\n Address = \"tls://10.90.38.8:2000\"\n Suite = \"Ed25519\"\n Public = \"d4ca39db7834fdad06ef8de54e34b4a0942816efe801ed8c1607d197e0d0bb4f\"\n Description = \"Unlynx Server 0\"\n[[servers]]\n Address = \"tls://10.90.38.10:2000\"\n Suite = \"Ed25519\"\n Public = \"cfa45916a96c14b4b9a8417c6ffff4108d73bc048190d0c1c350f955a8e516d7\"\n Description = \"Unlynx Server 1\"\n [[servers]]\n Address = \"tls://10.90.38.11:2000\"\n Suite = \"Ed25519\"\n Public = \"2580a4dc353b979410896d6d71f80b9254ee6999be8361bd2f0c956cf88ea113\"\n Description = \"Unlynx Server 2\""))
+            alert(AggregateKeys("[[servers]]\n Address = \"tls://10.90.38.8:2000\"\n Suite = \"Ed25519\"\n Public = \"d4ca39db7834fdad06ef8de54e34b4a0942816efe801ed8c1607d197e0d0bb4f\"\n Description = \"Unlynx Server 0\"\n[[servers]]\n Address = \"tls://10.90.38.10:2000\"\n Suite = \"Ed25519\"\n Public = \"cfa45916a96c14b4b9a8417c6ffff4108d73bc048190d0c1c350f955a8e516d7\"\n Description = \"Unlynx Server 1\"\n [[servers]]\n Address = \"tls://10.90.38.11:2000\"\n Suite = \"Ed25519\"\n Public = \"2580a4dc353b979410896d6d71f80b9254ee6999be8361bd2f0c956cf88ea113\"\n Description = \"Unlynx Server 2\""))
         }
 
         function aggkeysfile(){
             // do a GET request to fetch the gropu.toml and then use AggKeys to compute the aggregate key.
             fetch("group.toml").then(function(response) {
                 response.text().then(function(text) {
-                    alert(AggKeys(text));
+                    alert(AggregateKeys(text));
                 });
             });
         }
@@ -79,16 +56,6 @@
 	<input type="button" onclick="decrypt()" value="decrypt">
 
     <input type="button" onclick="genkey();encrypt();decrypt()" value="all">
-    <!--<input type="button" onclick="MyPrint()" value="print">-->
-    <br>
-
-    <input type="button" onclick="light_encrypt_init()" value="light enc init">
-    <input type="button" onclick="light_encrypt()" value="light enc">
-
-    <br>
-
-    <input type="button" onclick="enc10()" value="light enc 8 numbers">
-
 
 </body>
 </html>
