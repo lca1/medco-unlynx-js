@@ -19,7 +19,7 @@ func TestCrypto(t *testing.T) {
 		plainStart := strconv.FormatInt(rand.Int63n(1000), 10)
 
 		cipher := EncryptInt(pubKey, plainStart)
-		plainEnd := DecryptInt(cipher, secKey)
+		plainEnd := TempOverrideDecryptInt(cipher, secKey)
 		require.Equal(t, plainStart, plainEnd)
 	}
 }
