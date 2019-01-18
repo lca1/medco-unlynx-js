@@ -1,4 +1,4 @@
-FROM medco/unlynx:v1.2a-alpha as build
+FROM medco/unlynx:v1.2b-alpha as build
 
 # install gopherjs
 RUN go get -u github.com/gopherjs/gopherjs && \
