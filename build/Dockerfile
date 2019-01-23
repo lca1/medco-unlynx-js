@@ -1,4 +1,4 @@
-FROM golang:1.11
+FROM medco/unlynx:v1.2b-alpha as build
 
 # install gopherjs
 RUN go get -u github.com/gopherjs/gopherjs && \

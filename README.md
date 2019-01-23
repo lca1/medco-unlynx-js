@@ -1,5 +1,7 @@
-This repository contains wrapper Go code around [Unlynx](https://github.com/lca1/unlynx)
-that can be transpiled into Javascript using [GopherJS](https://github.com/gopherjs/gopherjs).
-The resulting Javascript code is packaged as NPM module and used in [Glowing Bear](https://github.com/lca1/glowing-bear) as part of the [MedCo Project](https://lca1.github.io/medco-documentation).
+## Documentation
+MedCo documentation is centralized on the following website: 
+[MedCo Unlynx Javascript](https://medco.epfl.ch/documentation/components/developer/medco-unlynx-js.html).
 
-Refer to the corresponding [MedCo Documentation](https://lca1.github.io/medco-documentation) page for more information and usage instructions.
+## License
+*medco-unlynx-js* is licensed under a End User Software License Agreement ('EULA') for non-commercial use. 
+If you need more information, please contact us.
