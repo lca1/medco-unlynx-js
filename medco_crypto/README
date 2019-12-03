@@ -1,0 +1,7 @@
+https://marcobotto.com/blog/compiling-and-bundling-typescript-libraries-with-webpack/
+
+# To transpile the typescript files
+tsc && tsc -m es6 --outDir lib-esm
+
+# To bundle
+npx webpack --config webpack.config.js

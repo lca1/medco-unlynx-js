@@ -1,0 +1,37 @@
+<meta charset="UTF-8">
+<head>
+	<title>JS encryption tests</title>
+	<script src="../_bundles/crypto.js"></script>
+	<script>
+
+		let counter = 0;
+		setInterval(()=> {
+            counter += 1;
+            document.querySelector("#mydiv").innerHTML = counter;
+            }, 100);
+		let pk = null, sk;
+		let cipher, plain;
+
+		function genkey(){
+			[sk, pk] = Crypto.GenerateKeyPair();
+			alert("Private key: " + sk.toString() + "\nPublic key: " + pk.toString())
+		}
+		function encrypt(){
+			cipher = Crypto.EncryptInt(pk, 8);
+			alert("Cipher: " + cipher.toString())
+		}
+		function decrypt() {
+			plain = Crypto.DecryptInt(sk, cipher);
+			alert("Plaintext: " + plain)
+		}
+	</script>
+</head>
+<body>
+    <div>Problem: the page is frozen while encrypting and decrypting => use web workers</div>
+    <div id="mydiv"></div>
+	<input type="button" onclick="genkey()" value="gen key">
+	<input type="button" onclick="encrypt()" value="encryp">
+	<input type="button" onclick="decrypt()" value="decrypt">
+    <input type="button" onclick="genkey();encrypt();decrypt()" value="all">
+
+</body>
