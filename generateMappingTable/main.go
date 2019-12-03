@@ -1,91 +1,101 @@
 package main
 
 import (
-	"encoding/json"
-	"errors"
-	"gopkg.in/dedis/crypto.v0/abstract"
-	"gopkg.in/dedis/onet.v1/network"
-	"gopkg.in/urfave/cli.v1"
+	"github.com/urfave/cli"
+	"go.dedis.ch/kyber/v3"
+	"go.dedis.ch/kyber/v3/suites"
+	"log"
 	"os"
-	"path/filepath"
 	"strconv"
 )
 
-//const MaxHomomorphicInt int64 = 100000
-var PointToInt map[string]int64 // = make(map[string]int64, MaxHomomorphicInt)
-var suite = network.Suite
+var PointToInt = make(map[string]int64,0)
+var suite = suites.MustFind("Ed25519")
 
-//const Nmappings = 10000
+//"mapping.ts"
 
 func printUsage() {
-	println("Usage: generateMappingTable <path to mapping.go> <nb mappings to generate>")
+	println("Usage: main <path to mapping.ts> <nbr mappings to generate> <negative values: [0,1]>")
 }
 
-func parseArguments(args cli.Args) (mappingPath string, nbMappings int64, err error) {
+func parseArguments(args cli.Args) (string, int64, bool) {
+	if len(args) != 4 {
+		printUsage()
+		log.Fatal("Wrong number of arguments")
+	}
+	mappingPath := args[1]
+	nbrMappings, err := strconv.ParseInt(args[2], 10, 64)
+	if err != nil {
+		printUsage()
+		log.Fatal("Error converting <nbr mappings to generate>")
+	}
 
-	if len(args) != 3 {
+	tmp, err := strconv.ParseInt(args[3], 10, 64)
+	if err != nil {
 		printUsage()
-		err = errors.New("wrong number of arguments")
-		return
+		log.Fatal("Error converting <negative values: [0,1]>")
 	}
-	mappingPath = args[0]
-	nbMappings, errConv := strconv.ParseInt(args[1], 10, 64)
-	if errConv != nil {
+
+	var checkNeg bool
+	if tmp == 0 {
+		checkNeg = false
+	} else if tmp == 1 {
+		checkNeg = true
+	} else {
 		printUsage()
-		err = errConv
-		return
+		log.Fatal("<negative values> should be 0 or 1")
 	}
-	return
+	return mappingPath, nbrMappings, checkNeg
+}
+
+func writeMapToJSFile(path string, pointToInt map[string]int64) error {
+	/*export let PointToInt: Record<string, number> = {
+		"edc876d6831fd2105d0b4389ca2e283166469289146e2ce06faefe98b22548df": 5,
+		"f47e49f9d07ad2c1606b4d94067c41f9777d4ffda709b71da1d88628fce34d85": 6
+	}*/
+
+	f, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	_, err = f.WriteString("export let PointToInt: Record<string, number> = {\n")
+	if err != nil {
+		return err
+	}
+	for k, v := range pointToInt {
+		_, err = f.WriteString("\t" + `"` + k + `": ` + strconv.FormatInt(v, 10) + ",\n")
+		if err != nil {
+			return err
+		}
+	}
+	_, err = f.WriteString("};")
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // Run this main to generate and populate the mapping table "point -> integer"
 func main() {
-
 	// parse arguments
-	mappingPath, nbMappings, err := parseArguments(os.Args)
-	if err != nil {
-		println(err)
-		return
-	}
+	mappingPath, nbrMappings, checkNeg := parseArguments(os.Args)
 
-	// populate the .go file
-	var Bi abstract.Point
+	// populate the .js file
+	var Bi kyber.Point
 	B := suite.Point().Base()
 	var m int64
 
-	for Bi, m = suite.Point().Null(), 0; m < nbMappings; Bi, m = Bi.Add(Bi, B), m+1 {
+	for Bi, m = suite.Point().Null(), 0; m < nbrMappings; Bi, m = Bi.Add(Bi, B), m+1 {
 		PointToInt[Bi.String()] = m
+		if checkNeg {
+			neg := suite.Point().Mul(suite.Scalar().SetInt64(int64(-m)), B)
+			PointToInt[neg.String()] = -m
+		}
 	}
-	marsh, err := json.Marshal(PointToInt)
+	err := writeMapToJSFile(mappingPath, PointToInt)
 	if err != nil {
-		println(err.Error())
-		return
-	}
-
-	// open file and write
-	absPath, err := filepath.Abs(mappingPath)
-	if err != nil {
-		println(err.Error())
-		return
-	}
-	f, err := os.OpenFile(absPath, os.O_APPEND|os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
-	if err != nil {
-		println(err.Error())
-		return
-	}
-	defer f.Close()
-
-	// Write go code to initialize the maximum point and integer and the mapping table
-	_, err = f.WriteString(
-		"package main \n" +
-			"var PointToInt = map[interface{}]interface{}")
-	if err != nil {
-		println(err.Error())
-		return
-	}
-	_, err = f.Write(marsh)
-	if err != nil {
-		println(err.Error())
-		return
+		log.Fatal(err)
 	}
 }
