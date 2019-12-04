@@ -16,13 +16,20 @@ class CipherText {
 		let cstr = "nil";
 		let kstr = cstr;
 		if (this.C != null) {
-			cstr = this.C.toString().slice(1, 7)
+			cstr = this.C.toString()
 		}
 		if (this.K != null) {
-			kstr = this.K.toString().slice(1, 7)
+			kstr = this.K.toString()
 		}
 		let str = "";
-		return str.concat("CipherText{",cstr,",",kstr,"}")
+		return str.concat("CipherText{",kstr,",",cstr,"}")
+	}
+
+	fromString(str: string): CipherText {
+		let index = str.indexOf(",");
+		let kString = str.slice(11, index); // 11 to remove CipherText{
+		let cString = str.slice(index+1, str.length);
+		return new CipherText(FromStringToPoint(kString), FromStringToPoint(cString))
 	}
 
 }
@@ -108,13 +115,30 @@ export function GenerateKeyPair() {
 	return [privKey, pubKey];
 }
 
-// Representation
-//______________________________________________________________________________________________________________________
-
-
-
 // Marshal
 //______________________________________________________________________________________________________________________
+
+function hexToBytes(hex: string): Buffer {
+	for (var bytes = [], c = 0; c < hex.length; c += 2)
+		bytes.push(parseInt(hex.substr(c, 2), 16));
+	return Buffer.from(bytes);
+}
+
+export function FromStringToPoint(p: string): Point {
+	let buf = hexToBytes(p)
+	let res = curve25519.point().base();
+	res.unmarshalBinary(buf)
+	return res
+}
+
+export function FromStringToScalar(p: string): Scalar {
+	let buf = hexToBytes(p)
+	let res = curve25519.scalar().pick();
+	res.unmarshalBinary(buf)
+	return res
+}
+
+
 
 /**
  * Converts a Number to Buffer of

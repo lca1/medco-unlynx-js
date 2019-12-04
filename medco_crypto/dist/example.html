@@ -21,7 +21,18 @@
 			alert("Cipher: " + cipher.toString())
 		}
 		function decrypt() {
-			plain = Crypto.DecryptInt(sk, cipher);
+			// test marshalling
+			let skStr = sk.toString();
+			let skNew = Crypto.FromStringToScalar(skStr);
+
+			let pkStr = pk.toString();
+			let pkNew = Crypto.FromStringToPoint(pkStr);
+
+			let cipherStr = cipher.toString();
+			let cipherNew = cipher.fromString(cipherStr);
+
+			// test decryption
+			plain = Crypto.DecryptInt(skNew, cipherNew);
 			alert("Plaintext: " + plain)
 		}
 	</script>

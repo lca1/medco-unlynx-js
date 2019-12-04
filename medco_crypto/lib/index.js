@@ -11,13 +11,22 @@ var CipherText = (function () {
         var cstr = "nil";
         var kstr = cstr;
         if (this.C != null) {
-            cstr = this.C.toString().slice(1, 7);
+            cstr = this.C.toString();
         }
         if (this.K != null) {
-            kstr = this.K.toString().slice(1, 7);
+            kstr = this.K.toString();
         }
         var str = "";
-        return str.concat("CipherText{", cstr, ",", kstr, "}");
+        return str.concat("CipherText{", kstr, ",", cstr, "}");
+    };
+    CipherText.prototype.fromString = function (str) {
+        alert(str);
+        var index = str.indexOf(",");
+        var kString = str.slice(11, index);
+        var cString = str.slice(index + 1, str.length);
+        alert(kString);
+        alert(cString);
+        return new CipherText(FromStringToPoint(kString), FromStringToPoint(cString));
     };
     return CipherText;
 }());
@@ -55,6 +64,25 @@ function GenerateKeyPair() {
     return [privKey, pubKey];
 }
 exports.GenerateKeyPair = GenerateKeyPair;
+function hexToBytes(hex) {
+    for (var bytes = [], c = 0; c < hex.length; c += 2)
+        bytes.push(parseInt(hex.substr(c, 2), 16));
+    return Buffer.from(bytes);
+}
+function FromStringToPoint(p) {
+    var buf = hexToBytes(p);
+    var res = curve25519.point().base();
+    res.unmarshalBinary(buf);
+    return res;
+}
+exports.FromStringToPoint = FromStringToPoint;
+function FromStringToScalar(p) {
+    var buf = hexToBytes(p);
+    var res = curve25519.scalar().pick();
+    res.unmarshalBinary(buf);
+    return res;
+}
+exports.FromStringToScalar = FromStringToScalar;
 function toBytesInt32(x) {
     var arr = new ArrayBuffer(4);
     var view = new DataView(arr);
