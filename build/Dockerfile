@@ -1,16 +1,8 @@
-FROM medco/unlynx:v1.2b-alpha as build
-
-# install gopherjs
-RUN go get -u github.com/gopherjs/gopherjs && \
-    cd "$GOPATH"/src/github.com/gopherjs/gopherjs && \
-    go get -u ./... && \
-    go install ./... && \
-    mkdir -p /medco-unlynx-js-src "$GOPATH"/src/github.com/lca1 && \
-    ln -s /medco-unlynx-js-src "$GOPATH"/src/github.com/lca1/medco-unlynx-js
+FROM golang:1.12 as build
 
 # set up build script
 COPY build/build.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/build.sh
 
-VOLUME /medco-unlynx-js-src
+VOLUME /src
 ENTRYPOINT build.sh

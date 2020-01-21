@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"gopkg.in/dedis/crypto.v0/abstract"
-	"gopkg.in/dedis/onet.v1/network"
+	"go.dedis.ch/kyber/v3"
+	"go.dedis.ch/kyber/v3/suites"
 	"gopkg.in/urfave/cli.v1"
 	"os"
 	"path/filepath"
@@ -13,7 +13,7 @@ import (
 
 //const MaxHomomorphicInt int64 = 100000
 var PointToInt map[string]int64 // = make(map[string]int64, MaxHomomorphicInt)
-var suite = network.Suite
+var suite = suites.MustFind("ed25519")
 
 //const Nmappings = 10000
 
@@ -49,7 +49,7 @@ func main() {
 	}
 
 	// populate the .go file
-	var Bi abstract.Point
+	var Bi kyber.Point
 	B := suite.Point().Base()
 	var m int64
 

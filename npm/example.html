@@ -1,0 +1,89 @@
+<meta charset="UTF-8">
+<head>
+	<title>JS encryption tests</title>
+
+	<script type="text/javascript" src="wasm_exec.js"></script>
+	<script type="text/javascript">
+		const go = new Go();
+		let engine = {
+			GenerateKeyPair: function() {},
+			EncryptInt: function() {},
+			DecryptInt: function() {},
+			AggregateKeys: function() {}
+		};
+		WebAssembly.instantiateStreaming(fetch("medco-unlynx-js.wasm"), go.importObject).then((result) => {
+			go.run(result.instance);
+			engine.GenerateKeyPair = function() {
+				return GenerateKeyPair();
+			};
+			engine.EncryptInt = function(key, text) {
+				return EncryptInt(key, text);
+			};
+			engine.DecryptInt = function(cipher, key) {
+				return DecryptInt(cipher, key);
+			};
+			engine.AggregateKeys = function(text) {
+				return AggregateKeys(text);
+			};
+			Promise.resolve();
+		});
+	</script>
+	<script>
+		var counter = 0;
+		setInterval(()=> {
+			counter += 1;
+			document.querySelector("#mydiv").innerHTML = counter;
+		}, 100);
+
+
+		var pk=null,sk;
+		var cipher, plain;
+
+		function genkey(){
+			var pair = engine.GenerateKeyPair().split(",");
+			sk = pair[0];
+			pk = pair[1];
+			alert("Private key: " + sk + "\nPublic key: " + pk)
+		}
+
+		function encrypt(){
+			cipher = engine.EncryptInt(pk, "9999")
+//			alert("Cipher: " + cipher)
+		}
+		function decrypt() {
+			plain = engine.DecryptInt(cipher, sk);
+			alert("Plaintext: " + plain)
+		}
+
+		// aggregate public keys into cothority key
+		function aggkeys(){
+			alert(engine.AggregateKeys("[[servers]]\n Address = \"tls://10.90.38.8:2000\"\n Suite = \"Ed25519\"\n Public = \"d4ca39db7834fdad06ef8de54e34b4a0942816efe801ed8c1607d197e0d0bb4f\"\n Description = \"Unlynx Server 0\"\n[[servers]]\n Address = \"tls://10.90.38.10:2000\"\n Suite = \"Ed25519\"\n Public = \"cfa45916a96c14b4b9a8417c6ffff4108d73bc048190d0c1c350f955a8e516d7\"\n Description = \"Unlynx Server 1\"\n [[servers]]\n Address = \"tls://10.90.38.11:2000\"\n Suite = \"Ed25519\"\n Public = \"2580a4dc353b979410896d6d71f80b9254ee6999be8361bd2f0c956cf88ea113\"\n Description = \"Unlynx Server 2\""))
+		}
+
+		function aggkeysfile(){
+			// do a GET request to fetch the gropu.toml and then use AggKeys to compute the aggregate key.
+			fetch("group.toml").then(function(response) {
+				response.text().then(function(text) {
+					alert(engine.AggregateKeys(text));
+				});
+			});
+		}
+	</script>
+</head>
+<body>
+<div>Problem: the page is frozen while encrypting and decrypting => use web workers</div>
+<div id="mydiv"></div>
+
+<input type="button" onclick="aggkeys()" value="aggregate">
+<input type="button" onclick="aggkeysfile()" value="aggregate from file">
+
+<br>
+
+<input type="button" onclick="genkey()" value="gen key">
+<input type="button" onclick="encrypt()" value="encryp">
+<input type="button" onclick="decrypt()" value="decrypt">
+
+<input type="button" onclick="genkey();encrypt();decrypt()" value="all">
+
+</body>
+</html>

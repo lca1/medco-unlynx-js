@@ -1,8 +1,22 @@
 version: '3.5'
 services:
-  build-medco-unlynx-js:
+  build:
     build:
       context: ..
       dockerfile: build/Dockerfile
+    environment:
+      - USER_ID
+      - GROUP_ID
     volumes:
-      - ..:/medco-unlynx-js-src
+      - ..:/src
+
+  interactive:
+    build:
+      context: ..
+      dockerfile: build/Dockerfile
+    environment:
+      - USER_ID
+      - GROUP_ID
+    volumes:
+      - ..:/src
+    entrypoint: bash
